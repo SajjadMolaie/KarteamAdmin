@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Nav from "../components/Nav";
 import Table from "../components/Table";
 import Button from "../components/Button";
+import Excelexport from "../components/Excelexport";
 import { getEnterExit } from "../services/enterExitService";
 import { getCompany } from "../services/companyService";
 
@@ -55,8 +56,9 @@ const Reports = ({ user }) => {
     let result = [];
 
     reports.forEach((r) => {
+      console.log(r);
       r.logs.length > 0 &&
-        r.logs.map((log) => {
+        r.logs.forEach((log) => {
           const date = new Date(log.date);
           const dateFormat =
             date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
@@ -123,6 +125,7 @@ const Reports = ({ user }) => {
         data={typeData}
         lable="وضعیت"
       />
+      <Excelexport excelData={filteredData} fileName={Date.now()} />
       <Table data={filteredData} cols={cols} rowsPerPage={10} />
     </Nav>
   );

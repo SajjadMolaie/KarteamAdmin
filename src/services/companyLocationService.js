@@ -19,3 +19,7 @@ export async function addLocation(name, company, long, lat, radius) {
     radius,
   });
 }
+
+export async function deleteLocation(id) {
+  return await http.delete(config.apiEndpoint + "/companyLocation/" + id);
+}

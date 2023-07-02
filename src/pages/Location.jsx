@@ -7,7 +7,11 @@ import Input from "../components/Input";
 import Nav from "../components/Nav";
 import Table from "../components/Table";
 import Button from "../components/Button";
-import { getLocations, addLocation } from "../services/companyLocationService";
+import {
+  getLocations,
+  addLocation,
+  deleteLocation,
+} from "../services/companyLocationService";
 import { getCompany } from "../services/companyService";
 import MapboxRadiusSelector from "../components/Map";
 
@@ -17,7 +21,7 @@ const Reports = ({ user }) => {
   const [update, setUpdate] = useState();
   const [companyId, setCompanyId] = useState("");
   const [center, setCenter] = useState([51.3347, 35.7219]); // default center
-  const [radius, setRadius] = useState(1200); // default radius in meters
+  const radius = 1200; // default radius in meters
 
   const schema = {
     name: Joi.string().required(),
@@ -86,7 +90,6 @@ const Reports = ({ user }) => {
     let result = [];
 
     location.forEach((loc) => {
-      console.log(loc);
       result.push({
         id: loc._id,
         lat: loc.lat,
@@ -103,6 +106,16 @@ const Reports = ({ user }) => {
 
   const onComapnyChange = (e) => {
     setCompanyId(e.target.value);
+  };
+
+  const onDelete = async (id) => {
+    try {
+      await deleteLocation(id);
+
+      setUpdate(!update);
+    } catch (ex) {
+      console.log(ex);
+    }
   };
 
   const companyData = [];
@@ -131,26 +144,30 @@ const Reports = ({ user }) => {
         data={companyData}
         lable="شرکت"
       />
-      <Table data={data} cols={cols} rowsPerPage={4} />
-      <form className="mt-5 w-1/5" onSubmit={handleSubmit}>
-        <Input
-          lable="نام موقعیت"
-          name="name"
-          id="name"
-          onChange={handleChange}
-          value={formData && formData.name}
-          type="txt"
-          error={formError && formError.name}
-        />
-        <div className="flex justify-between mt-1 mb-2">
-          <Button disabled={validate()} lable="ثبت" theme="primary" />
+      <Table data={data} cols={cols} rowsPerPage={3} onReject={onDelete} />
+      <div className="flex">
+        <form className="mt-5 w-1/4" onSubmit={handleSubmit}>
+          <Input
+            lable="نام موقعیت"
+            name="name"
+            id="name"
+            onChange={handleChange}
+            value={formData && formData.name}
+            type="txt"
+            error={formError && formError.name}
+          />
+          <div className="flex justify-between mt-1 mb-2">
+            <Button disabled={validate()} lable="ثبت" theme="primary" />
+          </div>
+        </form>
+        <div className="w-1/2 mr-40">
+          <MapboxRadiusSelector
+            center={center}
+            handleMapClick={handleMapClick}
+            radius={radius}
+          />
         </div>
-      </form>
-      <MapboxRadiusSelector
-        center={center}
-        handleMapClick={handleMapClick}
-        radius={radius}
-      />
+      </div>
     </Nav>
   );
 };

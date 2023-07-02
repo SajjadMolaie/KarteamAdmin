@@ -90,6 +90,13 @@ const Nav = ({ user, children }) => {
                 {nav && <span className="mx-4 font-medium">شرکت ها</span>}
               </NavLink>
               <NavLink
+                to="/location"
+                className={({ isActive }) => (isActive ? activeStyle : style)}
+              >
+                <img src={LocationDark} alt="location" className="w-6 h-6" />
+                {nav && <span className="mx-4 font-medium">موقعیت ها</span>}
+              </NavLink>
+              <NavLink
                 to="/cartable"
                 className={({ isActive }) => (isActive ? activeStyle : style)}
               >

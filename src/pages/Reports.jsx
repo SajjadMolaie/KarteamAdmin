@@ -31,7 +31,7 @@ const Reports = ({ user }) => {
     const getCompanies = async () => {
       try {
         const data = await getCompany();
-        setCompanyId(data[1].company._id);
+        setCompanyId(data[0].company._id);
         setCompanies(data);
       } catch (ex) {
         console.log(ex);

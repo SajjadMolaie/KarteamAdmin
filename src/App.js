@@ -14,6 +14,7 @@ import Cartable from "./pages/Cartable";
 import Users from "./pages/Users";
 import Reports from "./pages/Reports";
 import Company from "./pages/Company";
+import Location from "./pages/Location";
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -81,6 +82,14 @@ const App = () => {
             element={
               <ProtectedRoute user={user} type={true}>
                 <Company user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/location"
+            element={
+              <ProtectedRoute user={user} type={true}>
+                <Location user={user} />
               </ProtectedRoute>
             }
           />

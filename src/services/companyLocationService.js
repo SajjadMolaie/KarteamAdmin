@@ -1,0 +1,21 @@
+import { getJwt } from "./authService";
+import http from "./http";
+import config from "../config.json";
+
+http.setJwt(getJwt());
+
+export async function getLocations(company) {
+  return await http.get(
+    config.apiEndpoint + "/companyLocation/company/" + company
+  );
+}
+
+export async function addLocation(name, company, long, lat, radius) {
+  return await http.post(config.apiEndpoint + "/companyLocation", {
+    name,
+    company,
+    long,
+    lat,
+    radius,
+  });
+}

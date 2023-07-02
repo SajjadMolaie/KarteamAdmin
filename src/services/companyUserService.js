@@ -22,7 +22,7 @@ export async function deleteCompanyUser(id) {
 }
 
 export async function changeRoleCompanyUser(id, companyId, userId, role) {
-  const nRole = role === "Admin" ? "Member" : "Admin";
+  const nRole = role === "Admin" ? "Employee" : "Admin";
   return await http.put(config.apiEndpoint + "/companyUser/" + id, {
     company: companyId,
     user: userId,

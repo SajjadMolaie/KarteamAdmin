@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Cartable from "./pages/Cartable";
 import Users from "./pages/Users";
 import Reports from "./pages/Reports";
+import Company from "./pages/Company";
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -72,6 +73,14 @@ const App = () => {
             element={
               <ProtectedRoute user={user} type={true}>
                 <Reports user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/company"
+            element={
+              <ProtectedRoute user={user} type={true}>
+                <Company user={user} />
               </ProtectedRoute>
             }
           />

@@ -11,6 +11,8 @@ import Folder from "../images/folder.svg";
 import Profile from "../images/profile.svg";
 import Setting from "../images/setting.svg";
 import Logout from "../images/logout.svg";
+import Company from "../images/company.svg";
+import LocationDark from "../images/locationDark.svg";
 
 const Nav = ({ user, children }) => {
   const [nav, setNav] = useState(false);
@@ -79,6 +81,13 @@ const Nav = ({ user, children }) => {
               >
                 <img src={Dashboard} alt="Dashboard" className="w-6 h-6" />
                 {nav && <span className="mx-4 font-medium">داشبورد</span>}
+              </NavLink>
+              <NavLink
+                to="/company"
+                className={({ isActive }) => (isActive ? activeStyle : style)}
+              >
+                <img src={Company} alt="Company" className="w-6 h-6" />
+                {nav && <span className="mx-4 font-medium">شرکت ها</span>}
               </NavLink>
               <NavLink
                 to="/cartable"

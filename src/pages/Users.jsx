@@ -29,7 +29,7 @@ const Users = ({ user }) => {
 
   const schema = {
     phoneNumber: Joi.string().min(11).max(11).required(),
-    role: Joi.string().min(5).max(6).required(),
+    role: Joi.string().min(5).max(6).required().valid("Admin", "Employee"),
   };
 
   const onSubmit = async ({ phoneNumber, role }) => {
@@ -358,7 +358,7 @@ const Users = ({ user }) => {
                           value={formData2 && formData2.role}
                           type="text"
                           error={formError2 && formError2.role}
-                          placeholder="Admin || Member"
+                          placeholder="Admin || Employee"
                         />
                       </div>
                       <div className="flex justify-between mt-3">

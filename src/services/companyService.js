@@ -9,3 +9,14 @@ export async function getCompany() {
 
   return company;
 }
+
+export async function getMyCompany() {
+  return await http.get(config.apiEndpoint + "/company");
+}
+
+export async function addCompany(name, phoneNumber) {
+  return await http.post(config.apiEndpoint + "/company", {
+    name,
+    phoneNumber,
+  });
+}

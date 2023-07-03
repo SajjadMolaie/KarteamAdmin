@@ -1,18 +1,25 @@
 import React, { useEffect, useState } from "react";
+import Datepicker from "react-tailwindcss-datepicker";
 
 import Nav from "../components/Nav";
 import Table from "../components/Table";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Excelexport from "../components/Excelexport";
-import { getEnterExit } from "../services/enterExitService";
+import { getEnterExit, getEnterExitByTime } from "../services/enterExitService";
 import { getCompany } from "../services/companyService";
+import { findUserById } from "../services/userService";
 
 const Reports = ({ user }) => {
+  const [logDate, setLogDate] = useState({ endDate: null, startDate: null });
   const [reports, setReports] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [companyId, setCompanyId] = useState("");
   const [search, setSearch] = useState("");
+
+  const handleChange = (date) => {
+    setLogDate(date);
+  };
 
   const cols = [
     {
@@ -54,21 +61,32 @@ const Reports = ({ user }) => {
       }
     };
 
+    const getDataByTime = async (start, end) => {
+      try {
+        const { data } = await getEnterExitByTime(start, end, companyId);
+        setReports(data);
+      } catch (ex) {
+        console.log(ex);
+      }
+    };
+
     if (!companyId) getCompanies();
-    if (companyId) getData(companyId);
-  }, [companyId]);
+    if (companyId && logDate.startDate && logDate.endDate)
+      getDataByTime(logDate.startDate, logDate.endDate);
+    if (companyId && !logDate.endDate) getData(companyId);
+  }, [companyId, logDate]);
 
   const sData = () => {
     let result = [];
 
     reports.forEach((r) => {
-      console.log(r);
       //   r.logs.length > 0 &&
       //     r.logs.forEach((log) => {
       const date = new Date(r.date);
       const dateFormat =
-        date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-      const timeFormat = date.getHours() + ":" + date.getMinutes();
+        date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+      const timeFormat =
+        ((date.getHours() + 24) % 12 || 12) + ":" + date.getMinutes();
 
       r.user &&
         result.push({
@@ -125,6 +143,15 @@ const Reports = ({ user }) => {
   return (
     <Nav user={user}>
       <div className="flex">
+        <div>
+          <Datepicker
+            useRange={true}
+            value={logDate}
+            primaryColor="blue"
+            onChange={handleChange}
+            placeholder="بازه زمانی"
+          />
+        </div>
         <Button
           theme="dropdown"
           onChange={onComapnyChange}
@@ -138,7 +165,7 @@ const Reports = ({ user }) => {
           lable="وضعیت"
         />
         <div className="w-12 h-12 text-xl flex justify-center items-center">
-          <Excelexport excelData={filteredData} fileName={Date.now()} />
+          <Excelexport excelData={filteredData2} fileName={Date.now()} />
         </div>
         <div>
           <Input

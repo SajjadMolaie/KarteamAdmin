@@ -4,26 +4,18 @@ const useTable = (data, page, rowsPerPage) => {
   const [tableRange, setTableRange] = useState([]);
   const [slice, setSlice] = useState([]);
 
-  const calculateRange = (data, rowsPerPage) => {
+  useEffect(() => {
+    const start = Math.max(1, page - 2);
+    const end = Math.min(start + 4, Math.ceil(data.length / rowsPerPage));
     const range = [];
-    const num = Math.ceil(data.length / rowsPerPage);
-    for (let i = 1; i <= num; i++) {
+    for (let i = start; i <= end; i++) {
       range.push(i);
     }
-    return range;
-  };
+    setTableRange(range);
 
-  const sliceData = (data, page, rowsPerPage) => {
-    return data.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-  };
-
-  useEffect(() => {
-    const range = calculateRange(data, rowsPerPage);
-    setTableRange([...range]);
-
-    const slice = sliceData(data, page, rowsPerPage);
-    setSlice([...slice]);
-  }, [data, setTableRange, page, setSlice, rowsPerPage]);
+    const slice = data.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+    setSlice(slice);
+  }, [data, page, rowsPerPage]);
 
   return { slice, range: tableRange };
 };

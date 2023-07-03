@@ -15,3 +15,7 @@ export async function getUser(companyId) {
 export async function findAllUsers() {
   return await http.get(config.apiEndpoint + "/user");
 }
+
+export async function findUserById(id) {
+  return await http.get(config.apiEndpoint + "/user/" + id);
+}

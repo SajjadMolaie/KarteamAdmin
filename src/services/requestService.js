@@ -4,8 +4,9 @@ import config from "../config.json";
 
 http.setJwt(getJwt());
 
-export function getRequests() {
-  return http.get(config.apiEndpoint + "/request");
+export function getRequests(id) {
+  console.log(id);
+  return http.get(config.apiEndpoint + "/request/company/" + id);
 }
 
 export function updateRequest(request) {

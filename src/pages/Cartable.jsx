@@ -4,10 +4,13 @@ import Nav from "../components/Nav";
 import Table from "../components/Table";
 import Button from "../components/Button";
 import { getRequests, updateRequest } from "../services/requestService";
+import { getCompany } from "../services/companyService";
 
 const Cartable = ({ user }) => {
   const [requests, setRequests] = useState([]);
   const [updateRequests, setUpdateRequests] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [companyId, setCompanyId] = useState(null);
 
   const cols = [
     {
@@ -26,35 +29,44 @@ const Cartable = ({ user }) => {
   ];
 
   useEffect(() => {
-    const getData = async () => {
+    const getCompanys = async () => {
       try {
-        const { data } = await getRequests();
+        const data = await getCompany();
+        setCompanies(data);
+        setCompanyId(data[0].company._id);
+      } catch (ex) {
+        console.log(ex);
+      }
+    };
+
+    const getData = async (id) => {
+      try {
+        const { data } = await getRequests(id);
         setRequests(data);
       } catch (ex) {
         console.log(ex);
       }
     };
 
-    getData();
-
-    if (updateRequest) {
-      getData();
-      setUpdateRequests(false);
-    }
-  }, [updateRequests]);
+    // if (updateRequest && companyId !== null) {
+    //   getData();
+    //   setUpdateRequests(false);
+    // }
+    if (!companyId) getCompanys();
+    if (companyId !== null) getData(companyId);
+  }, [updateRequests, companyId]);
 
   const sData = () => {
     let result = [];
 
     requests.forEach((r) => {
-      r.staus === "Pending" &&
-        result.push({
-          id: r._id,
-          name: r.user.firstName + " " + r.user.lastName,
-          type: r.type,
-          start: r.start,
-          end: r.end,
-        });
+      result.push({
+        id: r._id,
+        name: r.user.firstName + " " + r.user.lastName,
+        type: r.type,
+        start: r.start,
+        end: r.end,
+      });
     });
 
     return result;
@@ -66,6 +78,9 @@ const Cartable = ({ user }) => {
 
   const onTypeChange = (e) => {
     setType(e.target.value);
+  };
+  const onCompanyChange = (e) => {
+    setCompanyId(e.target.value);
   };
 
   const typeData = [
@@ -104,11 +119,31 @@ const Cartable = ({ user }) => {
     }
   };
 
+  const companyData = [];
+
+  const setCompanyData = () => {
+    companies.forEach((company) => {
+      company.role === "Admin" &&
+        companyData.push({
+          name: company.company._id,
+          lable: company.company.name,
+        });
+    });
+  };
+
+  setCompanyData();
+
   const filteredData =
     type === "all" ? data : data.filter((d) => d.type === type && d);
 
   return (
     <Nav user={user}>
+      <Button
+        theme="dropdown"
+        onChange={onCompanyChange}
+        data={companyData}
+        lable="شرکت"
+      />
       <Button
         theme="dropdown"
         onChange={onTypeChange}

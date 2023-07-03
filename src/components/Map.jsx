@@ -16,8 +16,13 @@ const MapboxRadiusSelector = ({
   radius,
   locations,
 }) => {
+  const [location, setLocation] = useState("satari");
+
   return (
     <div>
+      <h1 className="relative top-6 z-50 backdrop-blur-2xl contrast-50 w-24 mr-auto text-left rounded-br-md rounded-tl-sm">
+        {location}
+      </h1>
       <Map
         style="mapbox://styles/mapbox/streets-v12"
         containerStyle={{
@@ -42,9 +47,10 @@ const MapboxRadiusSelector = ({
         {locations &&
           locations.map((loc) => (
             <Marker
-              coordinates={[loc.long, loc.lat]}
+              coordinates={[loc.lat, loc.long]}
               anchor="bottom"
               className="text-2xl"
+              onClick={() => setLocation(loc.name)}
             >
               <img src={Location} className="w-6 h-6" />
             </Marker>

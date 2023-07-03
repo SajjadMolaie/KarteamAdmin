@@ -10,7 +10,7 @@ export async function getLocations(company) {
   );
 }
 
-export async function addLocation(name, company, long, lat, radius) {
+export async function addLocation(name, company, lat, long, radius) {
   return await http.post(config.apiEndpoint + "/companyLocation", {
     name,
     company,

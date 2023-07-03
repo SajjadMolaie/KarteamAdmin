@@ -29,3 +29,7 @@ export async function changeRoleCompanyUser(id, companyId, userId, role) {
     role: nRole,
   });
 }
+
+export async function findAllCompanyUser(id) {
+  return await http.get(config.apiEndpoint + "/companyUser/company/" + id);
+}

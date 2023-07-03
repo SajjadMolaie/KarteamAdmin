@@ -165,6 +165,7 @@ const Reports = ({ user }) => {
             center={center}
             handleMapClick={handleMapClick}
             radius={radius}
+            locations={location}
           />
         </div>
       </div>

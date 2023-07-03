@@ -113,19 +113,23 @@ const Reports = ({ user }) => {
 
   return (
     <Nav user={user}>
-      <Button
-        theme="dropdown"
-        onChange={onComapnyChange}
-        data={companyData}
-        lable="شرکت"
-      />
-      <Button
-        theme="dropdown"
-        onChange={onTypeChange}
-        data={typeData}
-        lable="وضعیت"
-      />
-      <Excelexport excelData={filteredData} fileName={Date.now()} />
+      <div className="flex">
+        <Button
+          theme="dropdown"
+          onChange={onComapnyChange}
+          data={companyData}
+          lable="شرکت"
+        />
+        <Button
+          theme="dropdown"
+          onChange={onTypeChange}
+          data={typeData}
+          lable="وضعیت"
+        />
+        <div className="w-10 h-10 text-xl flex justify-center items-center">
+          <Excelexport excelData={filteredData} fileName={Date.now()} />
+        </div>
+      </div>
       <Table data={filteredData} cols={cols} rowsPerPage={10} />
     </Nav>
   );

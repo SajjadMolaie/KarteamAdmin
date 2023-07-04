@@ -55,7 +55,7 @@ const Reports = ({ user }) => {
     const getData = async (id) => {
       try {
         const { data } = await getEnterExit(id);
-        setReports(data);
+        setReports(data.reverse());
       } catch (ex) {
         console.log(ex);
       }

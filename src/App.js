@@ -15,6 +15,7 @@ import Users from "./pages/Users";
 import Reports from "./pages/Reports";
 import Company from "./pages/Company";
 import Location from "./pages/Location";
+import Time from "./pages/Time";
 
 const App = () => {
   const [user, setUser] = useState({});
@@ -50,6 +51,14 @@ const App = () => {
             element={
               <ProtectedRoute user={user} type={true}>
                 <Dashboard user={user} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/time"
+            element={
+              <ProtectedRoute user={user} type={true}>
+                <Time user={user} />
               </ProtectedRoute>
             }
           />

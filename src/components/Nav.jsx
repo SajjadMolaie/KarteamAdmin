@@ -13,6 +13,7 @@ import Setting from "../images/setting.svg";
 import Logout from "../images/logout.svg";
 import Company from "../images/company.svg";
 import LocationDark from "../images/locationDark.svg";
+import Clock from "../images/clock.svg";
 
 const Nav = ({ user, children }) => {
   const [nav, setNav] = useState(false);
@@ -95,6 +96,13 @@ const Nav = ({ user, children }) => {
               >
                 <img src={LocationDark} alt="location" className="w-6 h-6" />
                 {nav && <span className="mx-4 font-medium">موقعیت ها</span>}
+              </NavLink>
+              <NavLink
+                to="/time"
+                className={({ isActive }) => (isActive ? activeStyle : style)}
+              >
+                <img src={Clock} alt="time" className="w-6 h-6" />
+                {nav && <span className="mx-4 font-medium">فعالیت ها</span>}
               </NavLink>
               <NavLink
                 to="/cartable"

@@ -17,7 +17,6 @@ const Time = ({ user }) => {
       name: "name",
       lable: "نام و نام خانوادگی",
     },
-    { name: "deficit", lable: "کسری" },
     { name: "spent", lable: "مجموع حضور" },
   ];
 
@@ -26,7 +25,7 @@ const Time = ({ user }) => {
       try {
         const companies = await getCompany();
         setCompanies(companies);
-        setCompanyId(companies[2].company._id);
+        setCompanyId(companies[1].company._id);
       } catch (ex) {
         console.log(ex);
       }
@@ -59,70 +58,48 @@ const Time = ({ user }) => {
 
   const setData = () => {
     const result = [];
-    const start = new Date();
-    start.setHours(8, 30, 0, 0);
-    const end = new Date();
-    end.setHours(17, 0, 0, 0);
-    const totalWorkingHours = (end.getTime() - start.getTime()) / 1000;
     users.forEach((user) => {
       const enterLogs = [];
       const exitLogs = [];
-      const absenceLogs = [];
       logs.forEach((log) => {
         if (log.user._id === user.user._id) {
           if (log.type === "Enter") {
             enterLogs.push(log);
           } else if (log.type === "Exit") {
             exitLogs.push(log);
-          } else if (log.type === "Absent") {
-            absenceLogs.push(log);
           }
         }
       });
-      const obj = {
-        name: user.user.firstName + " " + user.user.lastName,
-        spent: "00:00",
-        deficit: "00:00",
-      };
-      if (absenceLogs.length > 0) {
-        // If the user is absent, don't calculate deficit
-        result.push(obj);
-        return;
-      }
-      // Remove Enter logs that don't have a matching Exit log
-      enterLogs.forEach((enterLog, index) => {
+      // Create a new array with valid Enter logs
+      const validEnterLogs = enterLogs.filter((enterLog) => {
         const exitLog = exitLogs.find(
-          (exitLog) => exitLog.date > enterLog.date
+          (exitLog) => new Date(exitLog.date) > new Date(enterLog.date)
         );
-        if (!exitLog) {
-          enterLogs.splice(index, 1);
-        }
+        return exitLog != null;
       });
       let timeSpent = 0;
-      enterLogs.forEach((enterLog) => {
+      validEnterLogs.forEach((enterLog) => {
         const enterTime = new Date(enterLog.date);
         const exitLog = exitLogs.find(
-          (exitLog) => exitLog.date > enterLog.date
+          (exitLog) => new Date(exitLog.date) > enterTime
         );
+        let exitTime;
         if (exitLog) {
-          const exitTime = new Date(exitLog.date);
-          const timeDiffInSeconds =
-            (exitTime.getTime() - enterTime.getTime()) / 1000;
-          timeSpent += timeDiffInSeconds;
+          exitTime = new Date(exitLog.date);
+        } else {
+          // Set exit time to current time if no matching Exit log
+          exitTime = new Date();
         }
+        const timeDiffInSeconds =
+          (exitTime.getTime() - enterTime.getTime()) / 1000;
+        timeSpent += timeDiffInSeconds;
       });
       const hours = Math.floor(timeSpent / 3600);
       const minutes = Math.floor((timeSpent % 3600) / 60);
-      const deficit = Math.abs(totalWorkingHours - timeSpent);
-      const deficitHours = Math.floor(deficit / 3600);
-      const deficitMinutes = Math.floor((deficit % 3600) / 60);
-      const deficitString =
-        String(deficitHours).padStart(2, "0") +
-        ":" +
-        String(deficitMinutes).padStart(2, "0");
-      obj.spent =
-        String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0");
-      obj.deficit = deficitString;
+      const obj = {
+        name: user.user.firstName + " " + user.user.lastName,
+        spent: hours + ":" + minutes,
+      };
       result.push(obj);
     });
     return result;

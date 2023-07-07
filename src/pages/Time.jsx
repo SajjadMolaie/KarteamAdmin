@@ -17,6 +17,8 @@ const Time = ({ user }) => {
       name: "name",
       lable: "نام و نام خانوادگی",
     },
+    { name: "absent", lable: "مجموع غیاب" },
+    { name: "deficit", lable: "مجموع کسری" },
     { name: "spent", lable: "مجموع حضور" },
   ];
 
@@ -78,6 +80,8 @@ const Time = ({ user }) => {
         return exitLog != null;
       });
       let timeSpent = 0;
+      let deficit = 0; // Initialize deficit to 0
+      let totalAttendance = 0; // Initialize totalAttendance to 0
       validEnterLogs.forEach((enterLog) => {
         const enterTime = new Date(enterLog.date);
         const exitLog = exitLogs.find(
@@ -90,15 +94,67 @@ const Time = ({ user }) => {
           // Set exit time to current time if no matching Exit log
           exitTime = new Date();
         }
-        const timeDiffInSeconds =
-          (exitTime.getTime() - enterTime.getTime()) / 1000;
-        timeSpent += timeDiffInSeconds;
+        // Check if the Enter and Exit logs occur on the same day
+        if (enterTime.toDateString() === exitTime.toDateString()) {
+          // Calculate time spent in seconds
+          const timeDiffInSeconds =
+            (exitTime.getTime() - enterTime.getTime()) / 1000;
+          // Calculate the time difference from 8:30 am in seconds
+          const timeDiffFromStartInSeconds =
+            (enterTime.getTime() -
+              new Date(
+                enterTime.getFullYear(),
+                enterTime.getMonth(),
+                enterTime.getDate(),
+                8,
+                30,
+                0
+              ).getTime()) /
+            1000;
+          // Calculate the time difference from 5:00 pm in seconds
+          const timeDiffToEndInSeconds =
+            (new Date(
+              enterTime.getFullYear(),
+              enterTime.getMonth(),
+              enterTime.getDate(),
+              17,
+              0,
+              0
+            ).getTime() -
+              exitTime.getTime()) /
+            1000;
+          // Check if the user logged in after 8:30 am
+          if (timeDiffFromStartInSeconds > 0) {
+            deficit += timeDiffFromStartInSeconds; // Add time difference to deficit
+          }
+          // Check if the user logged out before 5:00 pm
+          if (timeDiffToEndInSeconds > 0) {
+            deficit += timeDiffToEndInSeconds; // Add time difference to deficit
+          }
+          timeSpent += timeDiffInSeconds;
+          totalAttendance += 1;
+        }
       });
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        1
+      );
+      const diffInTime = currentDate.getTime() - firstDayOfMonth.getTime();
+      const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+      let absentDays = diffInDays - totalAttendance;
+      absentDays = Math.max(absentDays, 0); // Ensure absentDays is not negative
       const hours = Math.floor(timeSpent / 3600);
       const minutes = Math.floor((timeSpent % 3600) / 60);
+      const deficitHours = Math.floor(deficit / 3600); // Convert deficit to hours
+      const deficitMinutes = Math.floor((deficit % 3600) / 60); // Get remaining minutes
       const obj = {
         name: user.user.firstName + " " + user.user.lastName,
         spent: hours + ":" + minutes,
+        deficit: `${deficitHours}:${deficitMinutes}`,
+        attendance: totalAttendance,
+        absent: absentDays,
       };
       result.push(obj);
     });

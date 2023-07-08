@@ -10,7 +10,8 @@ const Cartable = ({ user }) => {
   const [requests, setRequests] = useState([]);
   const [updateRequests, setUpdateRequests] = useState(false);
   const [companies, setCompanies] = useState([]);
-  const [companyId, setCompanyId] = useState(null);
+  const [companyId, setCompanyId] = useState({name: null,lable: null});
+  const [type, setType] = useState({name: 'all', lable:'همه'});
 
   const cols = [
     {
@@ -32,8 +33,8 @@ const Cartable = ({ user }) => {
     const getCompanys = async () => {
       try {
         const data = await getCompany();
+        setCompanyId({name: data[0].company._id, lable: data[0].company.name});
         setCompanies(data);
-        setCompanyId(data[0].company._id);
       } catch (ex) {
         console.log(ex);
       }
@@ -52,8 +53,8 @@ const Cartable = ({ user }) => {
     //   getData();
     //   setUpdateRequests(false);
     // }
-    if (!companyId) getCompanys();
-    if (companyId !== null) getData(companyId);
+    if (!companyId.name) getCompanys();
+    if (companyId.name) getData(companyId.name);
   }, [updateRequests, companyId]);
 
   const sData = () => {
@@ -74,13 +75,12 @@ const Cartable = ({ user }) => {
 
   const data = sData();
 
-  const [type, setType] = useState("all");
 
-  const onTypeChange = (e) => {
-    setType(e.target.value);
+  const onTypeChange = (name, lable) => {
+    setType({name, lable});
   };
-  const onCompanyChange = (e) => {
-    setCompanyId(e.target.value);
+  const onCompanyChange = (name, lable) => {
+    setCompanyId({name, lable});
   };
 
   const typeData = [
@@ -134,19 +134,21 @@ const Cartable = ({ user }) => {
   setCompanyData();
 
   const filteredData =
-    type === "all" ? data : data.filter((d) => d.type === type && d);
+    type.name === "all" ? data : data.filter((d) => d.type === type.name && d);
 
   return (
     <Nav user={user}>
       <Button
         theme="dropdown"
         onChange={onCompanyChange}
+        selected={companyId}
         data={companyData}
         lable="شرکت"
       />
       <Button
         theme="dropdown"
         onChange={onTypeChange}
+        selected={type}
         data={typeData}
         lable="درخواست"
       />

@@ -19,7 +19,7 @@ const Reports = ({ user }) => {
   const [companies, setCompanies] = useState([]);
   const [location, setLocation] = useState([]);
   const [update, setUpdate] = useState();
-  const [companyId, setCompanyId] = useState("");
+  const [companyId, setCompanyId] = useState({name: null, lable: null});
   const [center, setCenter] = useState([51.3347, 35.7219]); // default center
   const radius = 1200; // default radius in meters
 
@@ -29,7 +29,7 @@ const Reports = ({ user }) => {
 
   const onSubmit = async ({ name }) => {
     try {
-      await addLocation(name, companyId, center[0], center[1], radius);
+      await addLocation(name, companyId.name, center[0], center[1], radius);
 
       setUpdate(!update);
     } catch (ex) {
@@ -66,7 +66,7 @@ const Reports = ({ user }) => {
     const getCompanies = async () => {
       try {
         const data = await getCompany();
-        setCompanyId(data[0].company._id);
+        setCompanyId({name:data[0].company._id, lable: data[0].company.name});
         setCompanies(data);
       } catch (ex) {
         console.log(ex);
@@ -82,8 +82,8 @@ const Reports = ({ user }) => {
       }
     };
 
-    if (!companyId) getCompanies();
-    if (companyId) getData(companyId);
+    if (!companyId.name) getCompanies();
+    if (companyId.name) getData(companyId.name);
   }, [companyId, update]);
 
   const sData = () => {
@@ -104,8 +104,8 @@ const Reports = ({ user }) => {
 
   const data = sData();
 
-  const onComapnyChange = (e) => {
-    setCompanyId(e.target.value);
+  const onComapnyChange = (name, lable) => {
+    setCompanyId({name, lable});
   };
 
   const onDelete = async (id) => {
@@ -142,6 +142,7 @@ const Reports = ({ user }) => {
         theme="dropdown"
         onChange={onComapnyChange}
         data={companyData}
+        selected={companyId}
         lable="شرکت"
       />
       <Table data={data} cols={cols} rowsPerPage={3} onReject={onDelete} />

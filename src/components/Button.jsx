@@ -2,7 +2,7 @@ import React from "react";
 
 import Down from "../images/down.svg";
 
-const Button = ({ theme, lable, active, data, ...rest }) => {
+const Button = ({ theme, lable, active, data, onChange,selected, ...rest }) => {
   return (
     <>
       {theme === "primary" && (
@@ -32,7 +32,7 @@ const Button = ({ theme, lable, active, data, ...rest }) => {
               type="button"
               className="hs-dropdown-toggle w-44 py-2 px-2 inline-flex justify-center items-center gap-2 rounded-full border-2 font-medium bg-gray-200 text-gray-700 border-white shadow-sm align-middle focus:outline-none transition-all text-sm"
             >
-              {lable}
+              {selected ? selected.lable : lable}
               <img src={Down} alt="dropDown" />
             </button>
 
@@ -42,10 +42,14 @@ const Button = ({ theme, lable, active, data, ...rest }) => {
             >
               {data.map((value) => (
                 <div
+                  onClick={() => onChange(value.name, value.lable)}
                   key={value.name}
-                  className="relative flex items-start py-2 px-3 rounded-md hover:bg-gray-100"
+                  className="relative cursor-pointer flex items-start py-2 px-3 rounded-md hover:bg-gray-100"
                 >
-                  <div className="flex items-center h-5 mt-1">
+                    <button>
+                      {value.lable}
+                    </button>
+                  {/* <div className="flex items-center h-5 mt-1">
                     <input
                       id={value.name}
                       name="hs-dropdown-item-radio"
@@ -58,7 +62,7 @@ const Button = ({ theme, lable, active, data, ...rest }) => {
                   </div>
                   <label htmlFor={value.name} className="mr-3.5">
                     {value.lable}
-                  </label>
+                  </label> */}
                 </div>
               ))}
             </div>

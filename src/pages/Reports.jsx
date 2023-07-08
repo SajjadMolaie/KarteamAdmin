@@ -14,8 +14,9 @@ const Reports = ({ user }) => {
   const [logDate, setLogDate] = useState({ endDate: null, startDate: null });
   const [reports, setReports] = useState([]);
   const [companies, setCompanies] = useState([]);
-  const [companyId, setCompanyId] = useState("");
+  const [companyId, setCompanyId] = useState({name: null, lable: null});
   const [search, setSearch] = useState("");
+  const [type, setType] = useState({name:'all',lable:'همه'});
 
   const handleChange = (date) => {
     setLogDate(date);
@@ -45,7 +46,7 @@ const Reports = ({ user }) => {
     const getCompanies = async () => {
       try {
         const data = await getCompany();
-        setCompanyId(data[0].company._id);
+        setCompanyId({name:data[0].company._id, lable: data[0].company.name});
         setCompanies(data);
       } catch (ex) {
         console.log(ex);
@@ -70,10 +71,10 @@ const Reports = ({ user }) => {
       }
     };
 
-    if (!companyId) getCompanies();
-    if (companyId && logDate.startDate && logDate.endDate)
+    if (!companyId.name) getCompanies();
+    if (companyId.name && logDate.startDate && logDate.endDate)
       getDataByTime(logDate.startDate, logDate.endDate);
-    if (companyId && !logDate.endDate) getData(companyId);
+    if (companyId.name && !logDate.endDate) getData(companyId.name);
   }, [companyId, logDate]);
 
   const sData = () => {
@@ -104,13 +105,13 @@ const Reports = ({ user }) => {
 
   const data = sData();
 
-  const [type, setType] = useState("all");
 
-  const onTypeChange = (e) => {
-    setType(e.target.value);
+
+  const onTypeChange = (name, lable) => {
+    setType({name, lable});
   };
-  const onComapnyChange = (e) => {
-    setCompanyId(e.target.value);
+  const onComapnyChange = (name, lable) => {
+    setCompanyId({name, lable});
   };
 
   const companyData = [];
@@ -134,7 +135,7 @@ const Reports = ({ user }) => {
   ];
 
   const filteredData =
-    type === "all" ? data : data.filter((d) => d.type === type && d);
+    type.name === "all" ? data : data.filter((d) => d.type === type.name && d);
 
   const filteredData2 = !search
     ? filteredData
@@ -156,12 +157,14 @@ const Reports = ({ user }) => {
           theme="dropdown"
           onChange={onComapnyChange}
           data={companyData}
+          selected={companyId}
           lable="شرکت"
         />
         <Button
           theme="dropdown"
           onChange={onTypeChange}
           data={typeData}
+          selected={type}
           lable="وضعیت"
         />
         <div className="w-12 h-12 text-xl flex justify-center items-center">

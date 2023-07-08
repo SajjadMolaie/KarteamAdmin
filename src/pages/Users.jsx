@@ -22,7 +22,7 @@ const Users = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [companys, setCompanys] = useState([]);
   const [search, setSearch] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState({name: null, lable: null});
   const [update, setUpdate] = useState();
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -68,8 +68,8 @@ const Users = ({ user }) => {
     schema
   );
 
-  const onTypeChange = (e) => {
-    setType(e.target.value);
+  const onTypeChange = (name, lable) => {
+    setType({name, lable});
   };
 
   const onEdit = async (data) => {
@@ -110,7 +110,7 @@ const Users = ({ user }) => {
       try {
         const data = await getCompany();
         setCompanys(data);
-        setType(data[0].company._id);
+        setType({name:data[0].company._id, lable: data[0].company.name});
       } catch (ex) {
         console.log(ex);
       }
@@ -125,8 +125,8 @@ const Users = ({ user }) => {
       }
     };
 
-    if (!type) getCompanys();
-    if (type) getUsers(type);
+    if (!type.name) getCompanys();
+    if (type.name) getUsers(type.name);
   }, [type, modalOpen, update]);
 
   const sData = () => {
@@ -201,6 +201,7 @@ const Users = ({ user }) => {
         <Button
           theme="dropdown"
           onChange={onTypeChange}
+          selected={type}
           data={typeData}
           lable="شرکت"
         />
